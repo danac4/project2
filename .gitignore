@@ -1,6 +1,7 @@
 env
 .idea/
 pyvenv.cfg
+bin/
 
 # Created by https://www.gitignore.io/api/macos,linux,django,python,pycharm
 

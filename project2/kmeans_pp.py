@@ -61,8 +61,17 @@ def read_files(path1, path2):
 
 
 def k_means_pp(pIndicies, points, k): #implementation of k-means++
-        N, dim = points.shape
-        centroids = []
+        n, dim = points.shape
+        init_centroids = []
+        min_dis = np.inf
+        p = None
+        for j in range(k):
+            curr = np.random.choice(n, p=p)
+            init_centroids.append(curr)
+            distances = np.power((points-points[curr]), 2).sum(axis=1)
+            min_dis = np.minimum(distances, min_dis)
+            p = np.divide(min_dis, min_dis.sum())
+
 
 
 k, max_iter, eps, path1, path2 = main_validity_check()

@@ -20,10 +20,16 @@ def validity_check_max_iter():
 
 
 def validity_check_eps(num):
-    assert float(num), 'Invalid Input!'
-    res = float(num)
-    assert res >= float(0), 'Invalid Input!'
-    return res
+    try:
+        res = float(num)
+        if res < 0:
+            print("Invalid Input!")
+            exit(1)
+        else:
+            return res
+    except ValueError:
+        print("Invalid Input!")
+        exit(1)
 
 
 def main_validity_check():
@@ -73,10 +79,9 @@ def k_means_pp(pIndicies, points, k): #implementation of k-means++
             p = np.divide(min_dis, min_dis.sum())
 
 
-
 k, max_iter, eps, path1, path2 = main_validity_check()
 indices, points = read_files(path1, path2)
 if k > points.shape[0]: #k is larger then the number of points
     print("Invalid Input!")
     exit(1)
-
+k_means_pp(indices, points, k)

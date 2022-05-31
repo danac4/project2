@@ -222,13 +222,13 @@ static PyObject* fit(PyObject* self, PyObject* args) {
         return NULL;
     }
     //list check
-    points = allocate_mem(dim, n);
-    create_matrix(points_list, points, dim, n);
-    createClusters(dim, centroids_list, k);
+    points = allocate_mem((int)dim, (int)n);
+    create_matrix(points_list, points, (int)dim, (int)n);
+    createClusters((int)dim, centroids_list, (int)k);
 
-    kmeans(max_iter, n, eps, clusters, points, dim, k);
-    final = array_to_PyList(clusters, k, dim);
-    free_memory(k, n, points, clusters);
+    kmeans((int)max_iter, (int)n, eps, clusters, points, (int)dim, (int)k);
+    final = array_to_PyList(clusters, (int)k, (int)dim);
+    free_memory((int)k, (int)n, points, clusters);
     return final;
 }
 

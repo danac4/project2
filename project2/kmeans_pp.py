@@ -1,6 +1,7 @@
 import sys
 import numpy as np
 import pandas as pd
+import mykmeanssp
 np.random.seed(0)
 MAX_ITER = 300
 
@@ -77,6 +78,17 @@ def k_means_pp(pIndicies, points, k): #implementation of k-means++
             distances = np.power((points-points[curr]), 2).sum(axis=1)
             min_dis = np.minimum(distances, min_dis)
             p = np.divide(min_dis, min_dis.sum())
+        res = mykmeanssp.fit((k, n, dim, eps, max_iter, points[init_centroids].tolist(), points.tolist()))
+        res_centroids = np.round(np.array(res), 4)
+        print(','.join([str(i) for i in pIndicies[init_centroids]]))
+        for row in range(k):
+            for col in range(dim):
+                s = str(res_centroids[row][col])
+                if col < dim-1:
+                    print(s + ",")
+                else:
+                    print(s + "\n")
+
 
 
 k, max_iter, eps, path1, path2 = main_validity_check()

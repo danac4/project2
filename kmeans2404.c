@@ -221,7 +221,7 @@ static PyObject* fit(PyObject* self, PyObject* args) {
     Py_ssize_t k, n, dim, eps, max_iter;
     Point *points;
     Cluster *clusters;
-    if (!PyArg_ParseTuple(args, "iiiiOO", &k, &n, &dim, &eps, &max_iter, &centroids_list, &points_list)) {
+    if (!PyArg_ParseTuple(args, "iiiiOO:fit", &k, &n, &dim, &eps, &max_iter, &centroids_list, &points_list)) {
         return NULL;
     }
     //list check

@@ -78,22 +78,16 @@ def k_means_pp(pIndicies, points, k): #implementation of k-means++
             distances = np.power((points-points[curr]), 2).sum(axis=1)
             min_dis = np.minimum(distances, min_dis)
             p = np.divide(min_dis, min_dis.sum())
-        res = mykmeanssp.fit((k, n, dim, eps, max_iter, points[init_centroids].tolist(), points.tolist()))
-        res_centroids = np.round(np.array(res), 4)
+        res = mykmeanssp.fit((k, n, dim, max_iter, eps,  points[init_centroids].tolist(), points.tolist()))
         print(','.join([str(i) for i in pIndicies[init_centroids]]))
-        for row in range(k):
-            for col in range(dim):
-                s = str(res_centroids[row][col])
-                if col < dim-1:
-                    print(s + ",")
-                else:
-                    print(s + "\n")
+        for centroid in res:
+            print(",".join(str(format(np.round(coord, 4))) for coord in centroid))
 
 
-
-k, max_iter, eps, path1, path2 = main_validity_check()
-indices, points = read_files(path1, path2)
-if k > points.shape[0]: #k is larger then the number of points
-    print("Invalid Input!")
-    exit(1)
-k_means_pp(indices, points, k)
+if __name__=="__main__":
+    k, max_iter, eps, path1, path2 = main_validity_check()
+    indices, points = read_files(path1, path2)
+    if k > points.shape[0]: #k is larger then the number of points
+        print("Invalid Input!")
+        exit(1)
+    k_means_pp(indices, points, k)

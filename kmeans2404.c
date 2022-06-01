@@ -218,10 +218,11 @@ void kmeans(int max_iter, int n, int eps, Cluster* clusters, Point* points, int 
 
 static PyObject* fit(PyObject* self, PyObject* args) {
     PyObject *final, *centroids_list, *points_list;
-    Py_ssize_t k, n, dim, eps, max_iter;
+    int k, n, dim, max_iter;
+    double eps;
     Point *points;
     Cluster *clusters;
-    if (!PyArg_ParseTuple(args, "iiiiOO:fit", &k, &n, &dim, &eps, &max_iter, &centroids_list, &points_list)) {
+    if (!PyArg_ParseTuple(args, "(iiiidOO):fit", &k, &n, &dim, &eps, &max_iter, &centroids_list, &points_list)) {
         return NULL;
     }
     //list check

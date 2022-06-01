@@ -1,14 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include </System/Library/Frameworks/Python.framework/versions/2.7/include/python2.7/Python.h>
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include <assert.h>
+#include <unistd.h>
+
 
 #define Mem_Assertion(x) if (!(x)){printf("An Error Has Occurred\n"); abort();}
 
 static PyObject* fit(PyObject *self, PyObject *args);
 
-typedef struct{
+typedef struct{ 
     int count;
     double* newPoints;
     double* centroid;
@@ -28,6 +28,8 @@ void free_data_points(int n, Point* points){
         free(points);
     }
 }
+
+
 void free_clusters(int k, Cluster* clusters){
     int j;
     for (j = 0; j < k; j++){
@@ -49,7 +51,7 @@ void pyList_to_array(PyObject *list, double* vector, int dim){
 
 
 Cluster* createClusters(int dim, PyObject *centroids, int k) {
-    int i;
+    Py_ssize_t i;
     Cluster *clusters;
     Cluster clus;
     PyObject *item;
@@ -90,14 +92,11 @@ Point* allocate_mem(int dim, int n){
 }
 
 void create_matrix(PyObject* points_list, Point* points, int dim, int n) {
-    int i;
-    PyObject *item, *coordinate;
+    Py_ssize_t i;
+    PyObject *item;
     for (i = 0; i < n; i++) {
         item = PyList_GetItem(points_list, i);
         pyList_to_array(item, points[i].vector, dim);
-//        for(j = 0; j < dim; j++){
-//            coordinate = PyList_GetItem(item, j);
-//            points[i].vector[j] = PyFloat_AsDouble(coordinate);
     }
 }
 
@@ -149,7 +148,7 @@ void add_point(Point* point, Cluster* cluster, int dim){
 }
 
 
-int centroid_update(Cluster* cluster, int dim, double *tmp_vector, int eps){
+int centroid_update(Cluster* cluster, int dim, double *tmp_vector, double eps){
     int has_changed, i, l;
     double norm_check;
     has_changed = 1;
@@ -172,7 +171,7 @@ int centroid_update(Cluster* cluster, int dim, double *tmp_vector, int eps){
 }
 
 
-int clusters_update(Cluster* clusters, int k, int dim, int eps) {
+int clusters_update(Cluster* clusters, int k, int dim, double eps) {
     int changed, i, epsilon_indicator;
     double *tmp_vector;
     changed = 1;
@@ -188,10 +187,10 @@ int clusters_update(Cluster* clusters, int k, int dim, int eps) {
 
 PyObject* array_to_PyList(Cluster *clusters, int k, int dim){
     Py_ssize_t i, j;
-    PyObject *PyList = PyList_New(k);
+    PyObject *PyList = PyList_New((Py_ssize_t)(k));
     PyObject *item;
     for(i = 0; i < k; i++){
-        item = PyList_New(dim);
+        item = PyList_New((Py_ssize_t)(dim));
         for(j = 0; j < dim; j++){
             PyList_SetItem(item, j, PyFloat_FromDouble(clusters[i].centroid[j]));
         }
@@ -200,8 +199,7 @@ PyObject* array_to_PyList(Cluster *clusters, int k, int dim){
     return PyList;
 }
 
-
-void kmeans(int max_iter, int n, int eps, Cluster* clusters, Point* points, int dim, int k) {
+void kmeans(int max_iter, int n, double eps, Cluster* clusters, Point* points, int dim, int k) {
     int epsilon_check, iter, i, index;
     epsilon_check = 0;
     iter = 0;
@@ -216,26 +214,27 @@ void kmeans(int max_iter, int n, int eps, Cluster* clusters, Point* points, int 
 }
 
 
-static PyObject* fit(PyObject* self, PyObject* args) {
-    PyObject *final, *centroids_list, *points_list;
-    int k, n, dim, max_iter;
+static PyObject* fit(PyObject *self, PyObject *args) {
+    PyObject *centroids_list, *points_list, *final;
     double eps;
+    int k, n, dim, max_iter;
     Point *points;
     Cluster *clusters;
-    if (!PyArg_ParseTuple(args, "(iiiidOO):fit", &k, &n, &dim, &eps, &max_iter, &centroids_list, &points_list)) {
+    if (!PyArg_ParseTuple(args, "iiiidOO", &k, &n, &dim, &max_iter, &eps, &centroids_list, &points_list)) {
         return NULL;
     }
-    //list check
     points = allocate_mem(dim, n);
     create_matrix(points_list, points, dim, n);
-    createClusters(dim, centroids_list, k);
-
+    clusters = createClusters(dim, centroids_list, k);
     kmeans(max_iter, n, eps, clusters, points, dim, k);
     final = array_to_PyList(clusters, k, dim);
     free_memory(k, n, points, clusters);
     return final;
 }
 
+int main(int argc, char *argv[]) {
+    return 1;
+}
 
 /* API */
 

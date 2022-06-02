@@ -94,7 +94,7 @@ def k_means_pp(pIndicies, points, k):
         print(','.join([str(i) for i in pIndicies[init_centroids]]))  # prints the indices of observations chosen by
         # the K-means++ algorithm as the initial centroids.
         for centroid in res:  # prints the final centroids from the K-means algorithm executed in c
-            print(",".join(str(format(np.round(coord, 4))) for coord in centroid))
+            print(",".join('{:.4f}'.format(np.round(coord, 4)) for coord in centroid))
 
 
 if __name__ == "__main__":
